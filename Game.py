@@ -222,7 +222,27 @@ while running:
             running = False
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
             running = False          
-	
+
+# Hay que acoplarlo a lo hecho
+""" 
+player1 = player.Kate((ancho_ventana/2, alto_ventana/2))
+game_over = False
+
+while game_over == False:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+
+    player.handle_event(event)
+    screen.fill(pygame.Color('gray'))
+    screen.blit(player.image, player.rect)
+
+    pygame.display.flip()
+    clock.tick(20)
+
+pygame.quit ()
+"""
     #Recargo la Pantalla (Evito la superoposicion)
     PANTALLA.blit(CanchaFutbol, (0, 0))
 
