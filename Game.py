@@ -1,3 +1,5 @@
+
+#coding=utf-8
 import pygame
 
 #Inicializo Pygame
@@ -10,7 +12,7 @@ PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Pygame Test")
 
 #Cancha de Futbol
-CanchaFutbol=pygame.image.load("Img/Background.png").convert()
+CanchaFutbol=pygame.image.load("segundoTpGrupalPython/Img/Background.png").convert()
 PANTALLA.blit(CanchaFutbol,(0,0))
 
 #Control de Velocidad
@@ -20,30 +22,33 @@ FPS=60
 #Balon
 #Variables de Movimiento
 velocidadPelota = 15
-Pelota = pygame.image.load("Img/Balon.png").convert()
+Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").convert()
 
 #Personaje 1 
 #Variables de Movimiento
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
 velocidad = 10
-Personaje = pygame.image.load("Img/J1.png").convert()
+Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/jugador1.png").convert()
 
 #Personaje 2
 #Variable de Moviento
 posicionX_Init2 = 800 #posición en x
 posicionY_Init2 = 325  #posición en y
 velocidad = 10
-Personaje = pygame.image.load("Img/J1.png").convert()
+Personaje2 = pygame.image.load("segundoTpGrupalPython/Img/jugador2.png").convert()
 
 
 class Jugador_Uno(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.image = Personaje
+        self.image = Personaje1
         self.rect = self.image.get_rect()
         self.rect.center = (posicionX_Init,posicionY_Init)
+        BLACK= (0,0,0)
+        self.image.set_colorkey(BLACK)
+
 
     def update(self):
         # Opción tecla pulsada
@@ -69,9 +74,11 @@ class Jugador_Dos(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.image = Personaje
+        self.image = Personaje2
         self.rect = self.image.get_rect()
         self.rect.center = (posicionX_Init2,posicionY_Init2)
+        BLACK= (0,0,0)
+        self.image.set_colorkey(BLACK)
     
     def update(self):
         # Opción tecla pulsada
@@ -102,6 +109,8 @@ class balonObjeto(pygame.sprite.Sprite):
         self.rect.center = (ANCHO // 2,ALTO // 2)
         self.velocidad_x = 0 # Velocidad inicial en x
         self.velocidad_y = 0 # Velocidad inicial en y
+        BLACK= (0,0,0)
+        self.image.set_colorkey(BLACK)
     
     def update(self):
         # Colision de jugador 1 con el balon
