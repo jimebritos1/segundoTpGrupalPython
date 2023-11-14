@@ -1,10 +1,26 @@
 # -*- coding: utf-8 -*-
 
 import pygame
+pygame.init()
+
+#Tamaño de la Pantalla
+ANCHO=1000
+ALTO=650
+PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
+pygame.display.set_caption("Pygame Test")
+
+#Cancha de Futbol
+CanchaFutbol=pygame.image.load("segundoTpGrupalPython/Img/Background.png").convert()
+PANTALLA.blit(CanchaFutbol,(0,0))
+
+#Control de Velocidad
+reloj = pygame.time.Clock()
+FPS=60
 
 class Personaje1(pygame.sprite.Sprite):
     def __init__(self, position):
-        self.sheet = pygame.image.load('segundoTpGrupalPython/kate.png')
+        super().__init__()  # Llamada al constructor de la clase base
+        self.sheet = pygame.image.load("segundoTpGrupalPython/Img/kate.png")
         self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
@@ -78,3 +94,37 @@ class Personaje1(pygame.sprite.Sprite):
                 self.update('stand_up')
             if event.key == pygame.K_DOWN:
                 self.update('stand_down')
+
+# Grupo de sprites
+sprites = pygame.sprite.Group()
+
+#instanciacion de Jugador 1
+Jugador_1 = Personaje1((ANCHO // 2, ALTO // 2))
+sprites.add(Jugador_1)
+
+running = True
+while running:
+    # FPS
+    reloj.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+            running = False          
+
+    
+    #Recargo la Pantalla (Evito la superoposicion)
+    PANTALLA.blit(CanchaFutbol, (0, 0))
+
+    #Actualizacion de Sprites
+    sprites.update()
+    
+    #Dibujo Sprites y Balon
+    sprites.draw(PANTALLA)
+   
+
+    pygame.display.update()
+   
+pygame.quit()
+

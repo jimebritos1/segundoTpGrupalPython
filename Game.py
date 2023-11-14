@@ -29,14 +29,14 @@ Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").convert()
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
 velocidad = 10
-Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/jugador1.png").convert()
+Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/jugador1.png")
 
 #Personaje 2
 #Variable de Moviento
 posicionX_Init2 = 800 #posición en x
 posicionY_Init2 = 325  #posición en y
 velocidad = 10
-Personaje2 = pygame.image.load("segundoTpGrupalPython/Img/jugador2.png").convert()
+Personaje2 = pygame.image.load("segundoTpGrupalPython/Img/jugador2.png")
 
 
 class Jugador_Uno(pygame.sprite.Sprite):
@@ -211,6 +211,11 @@ sprites.add(Jugador_1)
 Jugador_2 = Jugador_Dos()
 sprites.add(Jugador_2)
 
+'''
+player1 = Jugador_1((ANCHO/2, ALTO/2))
+game_over = False
+'''
+
 #Bucle del Juego y Controles 
 running = True
 while running:
@@ -223,26 +228,34 @@ while running:
         if pygame.key.get_pressed()[pygame.K_ESCAPE]:
             running = False          
 
-# Hay que acoplarlo a lo hecho
-""" 
-player1 = player.Kate((ancho_ventana/2, alto_ventana/2))
-game_over = False
+    # Hay que acoplarlo a lo hecho
+    ''' 
+    # Verificar si se ha marcado un gol
+    if Balon.rect.right >= ANCHO:
+        Jugador_1.goles += 1
+        print(f"Gol del Jugador 1. Goles: {Jugador_1.goles}")
+        # Reiniciar posiciones
+        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
+        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
+        Balon.rect.center = (ANCHO // 2, ALTO // 2)
 
-while game_over == False:
+    elif Balon.rect.left <= 0:
+        Jugador_2.goles += 1
+        print(f"Gol del Jugador 2. Goles: {Jugador_2.goles}")
+        # Reiniciar posiciones
+        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
+        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
+        Balon.rect.center = (ANCHO // 2, ALTO // 2)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game_over = True
-
-    player.handle_event(event)
-    screen.fill(pygame.Color('gray'))
-    screen.blit(player.image, player.rect)
+    Jugador_1.handle_event(event)
+    PANTALLA.fill(pygame.Color('gray'))
+    PANTALLA.blit(Jugador_1.image,Jugador_1.rect)
 
     pygame.display.flip()
-    clock.tick(20)
+    reloj.tick(20)
+    '''
 
-pygame.quit ()
-"""
+   
     #Recargo la Pantalla (Evito la superoposicion)
     PANTALLA.blit(CanchaFutbol, (0, 0))
 
