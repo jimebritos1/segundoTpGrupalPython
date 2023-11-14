@@ -1,0 +1,54 @@
+
+class Jugador_Uno(pygame.sprite.Sprite):
+    def __init__(self):
+        #código existente
+        self.goles = 0
+
+class Jugador_Dos(pygame.sprite.Sprite):
+    def __init__(self):
+        #código existente
+        self.goles = 0
+
+# Bucle del Juego y Controles 
+running = True
+while running:
+    # FPS
+    reloj.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Verificar si la tecla Escape está presionada
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_ESCAPE]:
+        running = False
+
+    # Actualizar Sprites y Balón
+    balon_objeto.update()
+    sprites.update()
+
+    # Verificar si se ha marcado un gol
+    if Balon.rect.right >= ANCHO:
+        Jugador_1.goles += 1
+        print(f"Gol del Jugador 1. Goles: {Jugador_1.goles}")
+        # Reiniciar posiciones
+        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
+        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
+        Balon.rect.center = (ANCHO // 2, ALTO // 2)
+
+    elif Balon.rect.left <= 0:
+        Jugador_2.goles += 1
+        print(f"Gol del Jugador 2. Goles: {Jugador_2.goles}")
+        # Reiniciar posiciones
+        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
+        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
+        Balon.rect.center = (ANCHO // 2, ALTO // 2)
+
+    # Dibujar Sprites y Balón
+    PANTALLA.blit(CanchaFutbol, (0, 0))
+    sprites.draw(PANTALLA)
+    balon_objeto.draw(PANTALLA)
+    pygame.display.update()
+
+pygame.quit()
