@@ -18,7 +18,7 @@ reloj = pygame.time.Clock()
 FPS=60
 
 class Personaje1(pygame.sprite.Sprite):
-    def __init__(self, position):
+    def __init__(self):
         super().__init__()  # Llamada al constructor de la clase base
         self.sheet = pygame.image.load("segundoTpGrupalPython/Img/kate.png")
         self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
@@ -57,7 +57,9 @@ class Personaje1(pygame.sprite.Sprite):
         if direction == 'down':
             self.clip(self.down_states)
             self.rect.y += 5
-
+            print("entro")
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
+    '''
         if direction == 'stand_left':
             self.clip(self.left_states[0])
         if direction == 'stand_right':
@@ -66,8 +68,8 @@ class Personaje1(pygame.sprite.Sprite):
             self.clip(self.up_states[0])
         if direction == 'stand_down':
             self.clip(self.down_states[0])
-
-        self.image = self.sheet.subsurface(self.sheet.get_clip())
+    '''
+   
 
     def handle_event(self, event):
         if event.type == pygame.QUIT:
@@ -83,7 +85,8 @@ class Personaje1(pygame.sprite.Sprite):
                 self.update('up')
             if event.key == pygame.K_DOWN:
                 self.update('down')
-
+                print("entro")
+'''
         if event.type == pygame.KEYUP:
 
             if event.key == pygame.K_LEFT:
@@ -93,7 +96,7 @@ class Personaje1(pygame.sprite.Sprite):
             if event.key == pygame.K_UP:
                 self.update('stand_up')
             if event.key == pygame.K_DOWN:
-                self.update('stand_down')
+                self.update('stand_down')'''
 
 # Grupo de sprites
 sprites = pygame.sprite.Group()
@@ -118,7 +121,7 @@ while running:
     PANTALLA.blit(CanchaFutbol, (0, 0))
 
     #Actualizacion de Sprites
-    sprites.update()
+    sprites.update("down")
     
     #Dibujo Sprites y Balon
     sprites.draw(PANTALLA)

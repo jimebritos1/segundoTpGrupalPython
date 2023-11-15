@@ -5,6 +5,10 @@ import pygame
 #Inicializo Pygame
 pygame.init()
 
+#Colores constantes
+BLACK = (0,0,0)
+WHITE = (255,255,255)
+
 #Tamaño de la Pantalla
 ANCHO=1000
 ALTO=650
@@ -29,25 +33,51 @@ Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").convert()
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
 velocidad = 10
-Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/jugador1.png")
+Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/kate.png")
 
 #Personaje 2
 #Variable de Moviento
 posicionX_Init2 = 800 #posición en x
 posicionY_Init2 = 325  #posición en y
 velocidad = 10
-Personaje2 = pygame.image.load("segundoTpGrupalPython/Img/jugador2.png")
+Personaje2 = pygame.image.load('segundoTpGrupalPython/Img/lucas.png')
 
 
 class Jugador_Uno(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.image = Personaje1
+        '''self.image = Personaje1
+        self.rect = self.image.get_rect()
+        self.rect.center = (posicionX_Init,posicionY_Init)'''
+        
+        
+        
+        self.sheet = Personaje1
+        self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
         self.rect.center = (posicionX_Init,posicionY_Init)
-        BLACK= (0,0,0)
+        self.frame = 0
+        self.left_states = { 0: (0, 76, 52, 76), 1: (52, 76, 52, 76), 2: (156, 76, 52, 76) }
+        self.right_states = { 0: (0, 152, 52, 76), 1: (52, 152, 52, 76), 2: (156, 152, 52, 76) }
+        self.up_states = { 0: (0, 228, 52, 76), 1: (52, 228, 52, 76), 2: (156, 228, 52, 76) }
+        self.down_states = { 0: (0, 0, 52, 76), 1: (52, 0, 52, 76), 2: (156, 0, 52, 76) }
         self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
+
+    def get_frame(self, frame_set):
+        self.frame += 1
+        if self.frame > (len(frame_set) - 1):
+            self.frame = 0
+        return frame_set[self.frame]
+
+    def clip(self, clipped_rect):
+        if type(clipped_rect) is dict:
+            self.sheet.set_clip(pygame.Rect(self.get_frame(clipped_rect)))
+        else:
+            self.sheet.set_clip(pygame.Rect(clipped_rect))
+        return clipped_rect
 
 
     def update(self):
@@ -56,29 +86,53 @@ class Jugador_Uno(pygame.sprite.Sprite):
 
         # Tecla A - Moviemiento a la izquierda
         if keys[pygame.K_a] and self.rect.left > 0:
+            self.clip(self.left_states)
             self.rect.x -= velocidad 
 
         # Tecla D - Moviemiento a la derecha
         elif keys[pygame.K_d] and self.rect.right < ANCHO :
+            self.clip(self.right_states)
             self.rect.x += velocidad
            
         # Tecla S - Moviemiento hacia abajo
-        if keys[pygame.K_s] and self.rect.bottom < ALTO:	
+        if keys[pygame.K_s] and self.rect.bottom < ALTO:
+            self.clip(self.down_states)
             self.rect.y += velocidad
 		
-        # Tecla W - Moviemiento hacia abajo
+        # Tecla W - Moviemiento hacia arriba
         if keys[pygame.K_w] and self.rect.top > 0:	
+            self.clip(self.up_states)
             self.rect.y -= velocidad
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
 
 class Jugador_Dos(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.image = Personaje2
+        self.sheet = Personaje2
+        self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
         self.rect = self.image.get_rect()
         self.rect.center = (posicionX_Init2,posicionY_Init2)
-        BLACK= (0,0,0)
-        self.image.set_colorkey(BLACK)
+        self.frame = 0
+        self.left_states = { 0: (0, 76, 52, 76), 1: (52, 76, 52, 76), 2: (156, 76, 52, 76) }
+        self.right_states = { 0: (0, 152, 52, 76), 1: (52, 152, 52, 76), 2: (156, 152, 52, 76) }
+        self.up_states = { 0: (0, 228, 52, 76), 1: (52, 228, 52, 76), 2: (156, 228, 52, 76) }
+        self.down_states = { 0: (0, 0, 52, 76), 1: (52, 0, 52, 76), 2: (156, 0, 52, 76) }
+    
+        
+    def get_frame(self, frame_set):
+        self.frame += 1
+        if self.frame > (len(frame_set) - 1):
+            self.frame = 0
+        return frame_set[self.frame]
+
+    def clip(self, clipped_rect):
+        if type(clipped_rect) is dict:
+            self.sheet.set_clip(pygame.Rect(self.get_frame(clipped_rect)))
+        else:
+            self.sheet.set_clip(pygame.Rect(clipped_rect))
+        return clipped_rect
     
     def update(self):
         # Opción tecla pulsada
@@ -86,19 +140,24 @@ class Jugador_Dos(pygame.sprite.Sprite):
 
         # Tecla A - Moviemiento a la izquierda
         if keys[pygame.K_LEFT] and self.rect.left > 0:
+            self.clip(self.left_states)
             self.rect.x -= velocidad 
 
         # Tecla D - Moviemiento a la derecha
         elif keys[pygame.K_RIGHT] and self.rect.right < ANCHO :
+            self.clip(self.right_states)
             self.rect.x += velocidad
            
         # Tecla S - Moviemiento hacia abajo
-        if keys[pygame.K_DOWN] and self.rect.bottom < ALTO:	
+        if keys[pygame.K_DOWN] and self.rect.bottom < ALTO:
+            self.clip(self.down_states)	
             self.rect.y += velocidad
 		
         # Tecla W - Moviemiento hacia arriba
         if keys[pygame.K_UP] and self.rect.top > 0:	
+            self.clip(self.up_states)
             self.rect.y -= velocidad
+        self.image = self.sheet.subsurface(self.sheet.get_clip())
 
 class balonObjeto(pygame.sprite.Sprite):
     def __init__(self):
@@ -109,8 +168,6 @@ class balonObjeto(pygame.sprite.Sprite):
         self.rect.center = (ANCHO // 2,ALTO // 2)
         self.velocidad_x = 0 # Velocidad inicial en x
         self.velocidad_y = 0 # Velocidad inicial en y
-        BLACK= (0,0,0)
-        self.image.set_colorkey(BLACK)
     
     def update(self):
         # Colision de jugador 1 con el balon
@@ -145,8 +202,6 @@ class balonObjeto(pygame.sprite.Sprite):
             elif self.velocidad_y <= 0:
                 self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
                      
-         # Colision de jugador 2 con el balon
-        
         # Colision de jugador 2 con el balon
         if self.rect.colliderect(Jugador_2.rect):
             intersection2 = self.rect.clip(Jugador_2.rect)
