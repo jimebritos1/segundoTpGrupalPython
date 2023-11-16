@@ -24,21 +24,21 @@ FPS=60
 
 #Balon
 #Variables de Movimiento
-velocidadPelota = 15
-Pelota = pygame.image.load("Img/pelota.png").convert()
+velocidadPelota = 4
+Pelota = pygame.image.load("Img/pelota.png")
 
 #Personaje 1 
 #Variables de Movimiento
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
-velocidad = 10
+velocidad = 8
 Personaje1 = pygame.image.load("Img/kate.png")
 
 #Personaje 2
 #Variable de Moviento
 posicionX_Init2 = 800 #posición en x
 posicionY_Init2 = 325  #posición en y
-velocidad = 10
+velocidad = 8
 Personaje2 = pygame.image.load('Img/lucas.png')
 
 
@@ -272,18 +272,18 @@ sprites.add(Jugador_2)
 player1 = Jugador_1((ANCHO/2, ALTO/2))
 game_over = False
 '''
-# Definición de las dimensiones del arco
+# Dimensiones del arco
 ancho_del_arco = 100
 alto_del_arco = 200
 
 # Coordenadas del centro de la cancha
-centro_x = 0
-centro_y = 0
+centro_x = ANCHO // 2
+centro_y = ALTO // 2
 
 # Coordenadas de los arcos
-arco_derecho_x = centro_x + ANCHO / 2
-arco_izquierdo_x = centro_x - ANCHO / 2
-arco_y = centro_y - alto_del_arco / 2
+arco_derecho_x = centro_x + ANCHO // 2   # Ajustado para que el arco derecho esté en el extremo derecho de la pantalla
+arco_izquierdo_x = centro_x - ANCHO // 2  # Ajustado para que el arco izquierdo esté en el extremo izquierdo de la pantalla
+arco_y = centro_y - alto_del_arco // 2
 
 #Bucle del Juego y Controles 
 running = True
