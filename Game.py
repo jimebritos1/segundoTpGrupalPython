@@ -33,7 +33,7 @@ Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").convert()
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
 velocidad = 10
-Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/kate.png")
+Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/archie.png")
 
 #Personaje 2
 #Variable de Moviento
