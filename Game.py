@@ -26,7 +26,7 @@ FPS=60
 #Balon
 #Variables de Movimiento
 velocidadPelota = 15
-Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").convert()
+Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png")
 
 #Personaje 1 
 #Variables de Movimiento

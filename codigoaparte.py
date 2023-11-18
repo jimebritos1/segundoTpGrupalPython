@@ -7,6 +7,7 @@ pygame.init()
 #Colores constantes
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+REDD=(225, 59, 23)
 
 #Tamaño de la Pantalla
 ANCHO=1000
@@ -15,7 +16,7 @@ PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Pygame Test")
 
 #Cancha de Futbol
-CanchaFutbol=pygame.image.load("Img/Background.png").convert()
+CanchaFutbol=pygame.image.load("segundoTpGrupalPython/Img/Background.png")
 PANTALLA.blit(CanchaFutbol,(0,0))
 
 #Control de Velocidad
@@ -25,35 +26,27 @@ FPS=60
 #Balon
 #Variables de Movimiento
 velocidadPelota = 4
-Pelota = pygame.image.load("Img/pelota.png")
+Pelota = pygame.image.load("segundoTpGrupalPython/Img/pelota.png")
 
 #Personaje 1 
 #Variables de Movimiento
 posicionX_Init = 200  #posición en x
 posicionY_Init = 325  #posición en y
 velocidad = 8
-Personaje1 = pygame.image.load("Img/kate.png")
+Personaje1 = pygame.image.load("segundoTpGrupalPython/Img/kate.png")
 
 #Personaje 2
 #Variable de Moviento
 posicionX_Init2 = 800 #posición en x
 posicionY_Init2 = 325  #posición en y
 velocidad = 8
-Personaje2 = pygame.image.load('Img/lucas.png')
+Personaje2 = pygame.image.load('segundoTpGrupalPython/Img/lucas.png')
 
 
 class Jugador_Uno(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
-        self.goles = 0
-
-        '''self.image = Personaje1
-        self.rect = self.image.get_rect()
-        self.rect.center = (posicionX_Init,posicionY_Init)'''
-        
-        
-        
         self.sheet = Personaje1
         self.sheet.set_clip(pygame.Rect(0, 0, 52, 76))
         self.image = self.sheet.subsurface(self.sheet.get_clip())
@@ -64,8 +57,8 @@ class Jugador_Uno(pygame.sprite.Sprite):
         self.right_states = { 0: (0, 152, 52, 76), 1: (52, 152, 52, 76), 2: (156, 152, 52, 76) }
         self.up_states = { 0: (0, 228, 52, 76), 1: (52, 228, 52, 76), 2: (156, 228, 52, 76) }
         self.down_states = { 0: (0, 0, 52, 76), 1: (52, 0, 52, 76), 2: (156, 0, 52, 76) }
-        self.image.set_colorkey(BLACK)
-        self.image.set_colorkey(WHITE)
+
+        self.goles = 0 # Contador de Goles
 
     def get_frame(self, frame_set):
         self.frame += 1
@@ -79,7 +72,6 @@ class Jugador_Uno(pygame.sprite.Sprite):
         else:
             self.sheet.set_clip(pygame.Rect(clipped_rect))
         return clipped_rect
-
 
     def update(self):
         # Opción tecla pulsada
@@ -120,9 +112,9 @@ class Jugador_Dos(pygame.sprite.Sprite):
         self.right_states = { 0: (0, 152, 52, 76), 1: (52, 152, 52, 76), 2: (156, 152, 52, 76) }
         self.up_states = { 0: (0, 228, 52, 76), 1: (52, 228, 52, 76), 2: (156, 228, 52, 76) }
         self.down_states = { 0: (0, 0, 52, 76), 1: (52, 0, 52, 76), 2: (156, 0, 52, 76) }
-        self.goles = 0
-
         
+        self.goles = 0 # Contador de Goles
+
     def get_frame(self, frame_set):
         self.frame += 1
         if self.frame > (len(frame_set) - 1):
@@ -236,6 +228,27 @@ class balonObjeto(pygame.sprite.Sprite):
             elif self.velocidad_y <= 0:
                 self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
         
+          # Colision con Palos
+        
+        if self.rect.colliderect(Palo_S_A):
+            if self.rect.left <= Palo_S_A.right:
+            # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+                if self.velocidad_x <= 0:
+                    self.rect.left = Palo_S_A.right
+                    print("toco derecha")
+                    self.velocidad_x = -abs(self.velocidad_x)
+
+            if self.rect.bottom >= Palo_S_A.top or self.rect.top <= Palo_S_A.bottom:
+            # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+                if self.velocidad_y > 0:
+                    self.rect.bottom = Palo_S_A.top
+                    print("toco arriba")
+                    self.velocidad_y = -abs(self.velocidad_y)
+            # Invierte la dirección (negativa a positiva) al tocar el límite superior
+            elif self.velocidad_y <= 0:
+                self.rect.top = Palo_S_A.bottom
+                print("toco dabajo")
+                self.velocidad_y = abs(self.velocidad_y)
 
         # Verifica si ha alcanzado el límite derecho o izquierdo y revierte la dirección si es necesario
         if self.rect.right >= ANCHO:
@@ -251,60 +264,7 @@ class balonObjeto(pygame.sprite.Sprite):
         self.rect.x += self.velocidad_x       
         self.rect.y += self.velocidad_y
         
-            
-# Grupo de sprites y balon
-sprites = pygame.sprite.Group()
-balon_objeto = pygame.sprite.Group()
-
-#instanciacion del Balon
-Balon = balonObjeto()
-balon_objeto.add(Balon)
-
-#instanciacion de Jugador 1
-Jugador_1 = Jugador_Uno()
-sprites.add(Jugador_1)
-
-#instanciacion de Jugador 2
-Jugador_2 = Jugador_Dos()
-sprites.add(Jugador_2)
-
-'''
-player1 = Jugador_1((ANCHO/2, ALTO/2))
-game_over = False
-'''
-# Dimensiones del arco
-ancho_del_arco = 100
-alto_del_arco = 200
-
-# Coordenadas del centro de la cancha
-centro_x = ANCHO // 2
-centro_y = ALTO // 2
-
-# Coordenadas de los arcos
-arco_derecho_x = centro_x + ANCHO // 2   # Ajustado para que el arco derecho esté en el extremo derecho de la pantalla
-arco_izquierdo_x = centro_x - ANCHO // 2  # Ajustado para que el arco izquierdo esté en el extremo izquierdo de la pantalla
-arco_y = centro_y - alto_del_arco // 2
-
-#Bucle del Juego y Controles 
-running = True
-while running:
-    # FPS
-    reloj.tick(FPS)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # Verificar si la tecla Escape está presionada
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
-        running = False
-
-    # Actualizar Sprites y Balón
-    balon_objeto.update()
-    sprites.update()
-
-    # Verificar si se ha marcado un gol
+def Coordenas_De_Gol():
     if (
     arco_izquierdo_x <= Balon.rect.centerx <= arco_izquierdo_x + ancho_del_arco
     and arco_y <= Balon.rect.centery <= arco_y + alto_del_arco
@@ -333,46 +293,78 @@ while running:
         Balon.velocidad_x = 0
         Balon.velocidad_y = 0
 
+# Dimensiones del arco
+ancho_del_arco = 100
+alto_del_arco = 200
 
-    # Hay que acoplarlo a lo hecho
-    ''' 
+# Coordenadas del centro de la cancha
+centro_x = ANCHO // 2
+centro_y = ALTO // 2
+
+# Coordenadas de los arcos
+arco_derecho_x = centro_x + ANCHO // 2   # Ajustado para que el arco derecho esté en el extremo derecho de la pantalla
+arco_izquierdo_x = centro_x - ANCHO // 2  # Ajustado para que el arco izquierdo esté en el extremo izquierdo de la pantalla
+arco_y = centro_y - alto_del_arco // 2
+
+
+# Grupo de sprites y balon
+sprites = pygame.sprite.Group()
+Objetos = pygame.sprite.Group()
+
+#instanciacion del Balon
+Balon = balonObjeto()
+Objetos.add(Balon)
+
+#instanciacion de Jugador 1
+Jugador_1 = Jugador_Uno()
+sprites.add(Jugador_1)
+
+#instanciacion de Jugador 2
+Jugador_2 = Jugador_Dos()
+sprites.add(Jugador_2)
+
+#Bucle del Juego y Controles 
+running = True
+while running:
+    # FPS
+    reloj.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        # Verificar si la tecla Escape está presionada
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            running = False
+
     # Verificar si se ha marcado un gol
-    if Balon.rect.right >= ANCHO:
-        Jugador_1.goles += 1
-        print(f"Gol del Jugador 1. Goles: {Jugador_1.goles}")
-        # Reiniciar posiciones
-        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
-        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
-        Balon.rect.center = (ANCHO // 2, ALTO // 2)
+    Coordenas_De_Gol()
 
-    elif Balon.rect.left <= 0:
-        Jugador_2.goles += 1
-        print(f"Gol del Jugador 2. Goles: {Jugador_2.goles}")
-        # Reiniciar posiciones
-        Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
-        Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
-        Balon.rect.center = (ANCHO // 2, ALTO // 2)
-
-    Jugador_1.handle_event(event)
-    PANTALLA.fill(pygame.Color('gray'))
-    PANTALLA.blit(Jugador_1.image,Jugador_1.rect)
-
-    pygame.display.flip()
-    reloj.tick(20)
-    '''
-
-   
     #Recargo la Pantalla (Evito la superoposicion)
     PANTALLA.blit(CanchaFutbol, (0, 0))
 
+
+    # Dibujo el Portero A
+    Palo_T_A = pygame.draw.line(PANTALLA,WHITE, [0,210],[0,419],20) # Palo Trasero
+    pygame.draw.line(PANTALLA,REDD, [0,210],[200,210],40) # Palo Superior
+    pygame.draw.line(PANTALLA,REDD, [0,420],[49,420],10) # Palo Inferior
+    Palo_S_A = pygame.Rect(0, 220, 200, 40)  # Área de colisión para el Palo Superior
+    Palo_I_A = pygame.Rect(0, 410, 49, 10)  # Área de colisión para el Palo Inferior
+
+    # Dibujo el Portero B
+    Palo_T_B = pygame.draw.line(PANTALLA,WHITE, [1000,210],[1000,419],20) # Palo Trasero
+    Palo_S_B = pygame.draw.line(PANTALLA,REDD, [951,210],[1000,210],10) # Palo Superior
+    Palo_I_B = pygame.draw.line(PANTALLA,REDD, [951,420],[1000,420],10) # Palo Inferior
+
+    
     #Actualizacion de Sprites
-    balon_objeto.update()
+    Objetos.update()
     sprites.update()
     
     #Dibujo Sprites y Balon
-    PANTALLA.blit(CanchaFutbol, (0, 0))
     sprites.draw(PANTALLA)
-    balon_objeto.draw(PANTALLA)
+    Objetos.draw(PANTALLA)
     pygame.display.update()
    
 pygame.quit()
