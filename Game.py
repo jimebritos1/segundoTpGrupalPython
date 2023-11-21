@@ -5,6 +5,8 @@ import pygame
 pygame.init()
 pygame.mixer.init()
 
+
+
 #Colores constantes
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -14,6 +16,11 @@ ANCHO=1000
 ALTO=650
 PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Pygame Test")
+
+
+Palo_S_I=pygame.draw.rect(PANTALLA,WHITE,(0,225,50,20))
+Palo_I_I=pygame.draw.rect(PANTALLA,WHITE,(0,405,50,20))
+
 
 #Cancha de Futbol
 CanchaFutbol=pygame.image.load("Img/Background.png").convert()
@@ -225,6 +232,42 @@ class Jugador_Dos(pygame.sprite.Sprite):
             self.rect.y -= velocidad
         self.image = self.sheet.subsurface(self.sheet.get_clip())
 
+class PaloSuperiorIzq(pygame.sprite.Sprite):
+    def __init__(self):
+	    # Heredamos el init de la clase Sprite de Pygame
+        super().__init__()
+
+        self.image = pygame.Surface((100,20))
+        self.rect = self.image.get_rect()
+        self.rect.center = (0,225)
+            
+class PaloInferiorIzq(pygame.sprite.Sprite):
+    def __init__(self):
+	    # Heredamos el init de la clase Sprite de Pygame
+        super().__init__()
+        self.image = pygame.Surface((100,20))
+        self.rect = self.image.get_rect()
+        self.rect.center = (0,425)
+
+class PaloSuperiorDer(pygame.sprite.Sprite):
+    def __init__(self):
+	    # Heredamos el init de la clase Sprite de Pygame
+        super().__init__()
+        
+        self.image = pygame.Surface((100,20))
+        self.rect = self.image.get_rect()
+        self.rect.center = (1000,225)
+            
+class PaloInferiorDer(pygame.sprite.Sprite):
+    def __init__(self):
+	    # Heredamos el init de la clase Sprite de Pygame
+        super().__init__()
+        self.image = pygame.Surface((100,20))
+        self.rect = self.image.get_rect()
+        self.rect.center = (1000,425)
+       
+        
+
 class balonObjeto(pygame.sprite.Sprite):
     def __init__(self):
 	    # Heredamos el init de la clase Sprite de Pygame
@@ -306,7 +349,33 @@ class balonObjeto(pygame.sprite.Sprite):
                 self.velocidad_y = velocidadPelota  # Colisión desde abajo, cambia a arriba
             elif self.velocidad_y <= 0:
                 self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
+
+
+        #Colsion de los Palos con la pelota
+        ColisionP= pygame.sprite.spritecollide(Balon,ObjetoPalos,False)
+        if ColisionP:
+            if self.rect.right >= Palo_S_I.rect.right:
+                self.velocidad_x = abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+            if self.rect.top >= Palo_S_I.rect.top:
+                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+
+            if self.rect.right >= Palo_I_I.rect.right:
+                self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+            if self.rect.bottom <= Palo_I_I.rect.bottom:
+                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+
+            if self.rect.left <= Palo_S_D.rect.left:
+                self.velocidad_x = abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+            if self.rect.top >= Palo_S_D.rect.top:
+                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+
+            if self.rect.left <= Palo_I_D.rect.left:
+                self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+            if self.rect.bottom <= Palo_I_D.rect.bottom:
+                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+
         
+
         # Verifica si ha alcanzado el límite derecho o izquierdo y revierte la dirección si es necesario
         if self.rect.right >= ANCHO:
             self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
@@ -320,15 +389,17 @@ class balonObjeto(pygame.sprite.Sprite):
         
         self.rect.x += self.velocidad_x       
         self.rect.y += self.velocidad_y
-        
-            
+
+
+
 # Grupo de sprites y balon
 sprites = pygame.sprite.Group()
-Objetos = pygame.sprite.Group()
+ObjetoBalon = pygame.sprite.Group()
+ObjetoPalos = pygame.sprite.Group()
 
 #instanciacion del Balon
 Balon = balonObjeto()
-Objetos.add(Balon)
+ObjetoBalon.add(Balon)
 
 #instanciacion de Jugador 1 con nombre
 Jugador_1 = Jugador_Uno(nombre_jugador_1)
@@ -338,10 +409,23 @@ sprites.add(Jugador_1)
 Jugador_2 = Jugador_Dos(nombre_jugador_2)
 sprites.add(Jugador_2)
 
+#instanciacion de Palos con nombre
+Palo_S_I = PaloSuperiorIzq()
+ObjetoPalos.add(Palo_S_I)
+
+Palo_I_I = PaloInferiorIzq()
+ObjetoPalos.add(Palo_I_I)
+
+Palo_S_D = PaloSuperiorDer()
+ObjetoPalos.add(Palo_S_D)
+
+Palo_I_D = PaloInferiorDer()
+ObjetoPalos.add(Palo_I_D)
+
 '''VARIABLES Y FUNCIONES DEL ARCO'''
 # Dimensiones del arco
-ancho_del_arco = 100
-alto_del_arco = 200
+ancho_del_arco = 50
+alto_del_arco = 160
 
 # Coordenadas del centro de la cancha
 centro_x = ANCHO // 2
@@ -371,11 +455,15 @@ def Verif_Gol():
     ):
         # Gol del Jugador 2
         Jugador_2.goles += 1
+        #Sonido de Gol
         SoundGol.play()
         # Reiniciar posiciones
         Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
         Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
         Balon.rect.center = (ANCHO // 2, ALTO // 2)
+        # Detener el movimiento de la pelota
+        Balon.velocidad_x = 0
+        Balon.velocidad_y = 0
 
     elif (
     arco_derecho_x - ancho_del_arco <= Balon.rect.centerx <= arco_derecho_x
@@ -383,16 +471,17 @@ def Verif_Gol():
     ):
         # Gol del Jugador 1
         Jugador_1.goles += 1
+        #Sonido de Gol
         SoundGol.play()
         # Reiniciar posiciones
         Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
         Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
         Balon.rect.center = (ANCHO // 2, ALTO // 2)
-        
         # Detener el movimiento de la pelota
         Balon.velocidad_x = 0
         Balon.velocidad_y = 0
-
+        
+    
 '''BUCLE DE JUEGO '''
 running = True
 while running:
@@ -402,32 +491,31 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
     # Verificar si la tecla Escape está presionada
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
-        running = False
-
-    # Actualizar Sprites y Balón
-    Objetos.update()
-    sprites.update()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            running = False
 
     # Verificar si se ha marcado un gol
     Verif_Gol()
 
-    #Recargo la Pantalla (Evito la superoposicion)
-    PANTALLA.blit(CanchaFutbol, (0, 0))
-
     #Actualizacion de Sprites
-    Objetos.update()
+    ObjetoBalon.update()
+    ObjetoPalos.update()
     sprites.update()
     
     #Dibujo Sprites y Balon
     PANTALLA.blit(CanchaFutbol, (0, 0))
+
+    #Grafico del Arco
+    pygame.draw.line(PANTALLA,WHITE,[0,225],[0,424],10)
+    pygame.draw.line(PANTALLA,WHITE,[999,225],[999,424],10)
+
     sprites.draw(PANTALLA)
-    Objetos.draw(PANTALLA)
+    ObjetoBalon.draw(PANTALLA)
+    ObjetoPalos.draw(PANTALLA)
     mostrar_puntaje()
-    
+
     pygame.display.update()
    
 pygame.quit()
