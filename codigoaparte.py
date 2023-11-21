@@ -41,12 +41,72 @@ posicionY_Init2 = 325  #posición en y
 velocidad = 8
 Personaje2 = pygame.image.load('Img/lucas.png')
 
+# Cargar la imagen de fondo para el ingreso de nombres
+fondo_ingreso_nombres = pygame.image.load("Img/estadio.jpg") 
+fondo_ingreso_nombres = pygame.transform.scale(fondo_ingreso_nombres, (ANCHO, ALTO))  
+
+# Nombres de los jugadores
+nombre_jugador_1 = ""
+nombre_jugador_2 = ""
+
+# Pantalla de ingreso de nombres
+ingresando_nombres = True
+jugador_actual = 1  # Jugador 1 empieza ingresando su nombre
+
+while ingresando_nombres:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                # Si se presiona Enter, cambiamos al siguiente jugador o salimos del bucle
+                if jugador_actual == 1:
+                    jugador_actual = 2
+                else:
+                    ingresando_nombres = False
+            elif event.key == pygame.K_BACKSPACE:
+                # Si se presiona Retroceso, borramos el último carácter del nombre actual
+                if jugador_actual == 1:
+                    nombre_jugador_1 = nombre_jugador_1[:-1]
+                else:
+                    nombre_jugador_2 = nombre_jugador_2[:-1]
+            elif event.unicode.isalnum():
+                # Si se presiona una tecla alfanumérica, la agregamos al nombre actual
+                if jugador_actual == 1:
+                    nombre_jugador_1 += event.unicode
+                else:
+                    nombre_jugador_2 += event.unicode
+
+    # Llenar la pantalla con negro antes de blit de la imagen de fondo
+    PANTALLA.fill(BLACK)
+    
+    # Blit de la imagen de fondo
+    PANTALLA.blit(fondo_ingreso_nombres, (0, 0))
+
+    # Texto de instrucciones
+    font_instrucciones = pygame.font.Font(None, 36)
+    texto_instrucciones = font_instrucciones.render("Ingrese su nombre y presione Enter", True, WHITE)
+    PANTALLA.blit(texto_instrucciones, (ANCHO // 2 - texto_instrucciones.get_width() // 2, ALTO // 4))
+
+    # Ingreso de nombre del Jugador 1
+    font_nombre = pygame.font.Font(None, 48)
+    texto_nombre_1 = font_nombre.render("Nombre Jugador 1: " + nombre_jugador_1, True, WHITE)
+    PANTALLA.blit(texto_nombre_1, (ANCHO // 4, ALTO // 2))
+
+    # Ingreso de nombre del Jugador 2
+    texto_nombre_2 = font_nombre.render("Nombre Jugador 2: " + nombre_jugador_2, True, WHITE)
+    PANTALLA.blit(texto_nombre_2, (ANCHO // 4, ALTO // 2 + 60))
+
+    pygame.display.update()
 
 class Jugador_Uno(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, nombre):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
         self.goles = 0
+        self.nombre = nombre
 
         '''self.image = Personaje1
         self.rect = self.image.get_rect()
@@ -107,7 +167,7 @@ class Jugador_Uno(pygame.sprite.Sprite):
         self.image = self.sheet.subsurface(self.sheet.get_clip())
 
 class Jugador_Dos(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, nombre):
 	    # Heredamos el init de la clase Sprite de Pygame
         super().__init__()
         self.sheet = Personaje2
@@ -121,6 +181,8 @@ class Jugador_Dos(pygame.sprite.Sprite):
         self.up_states = { 0: (0, 228, 52, 76), 1: (52, 228, 52, 76), 2: (156, 228, 52, 76) }
         self.down_states = { 0: (0, 0, 52, 76), 1: (52, 0, 52, 76), 2: (156, 0, 52, 76) }
         self.goles = 0
+        self.nombre = nombre
+
 
         
     def get_frame(self, frame_set):
@@ -260,12 +322,12 @@ balon_objeto = pygame.sprite.Group()
 Balon = balonObjeto()
 balon_objeto.add(Balon)
 
-#instanciacion de Jugador 1
-Jugador_1 = Jugador_Uno()
+#instanciacion de Jugador 1 con nombre
+Jugador_1 = Jugador_Uno(nombre_jugador_1)
 sprites.add(Jugador_1)
 
-#instanciacion de Jugador 2
-Jugador_2 = Jugador_Dos()
+#instanciacion de Jugador 2 con nombre
+Jugador_2 = Jugador_Dos(nombre_jugador_2)
 sprites.add(Jugador_2)
 
 '''
@@ -290,8 +352,8 @@ font = pygame.font.Font(None, 36)
 
 def mostrar_puntaje():
     # Renderizar el puntaje de los jugadores
-    puntaje_jugador_1 = font.render(f"Jugador 1: {Jugador_1.goles}", True, WHITE)
-    puntaje_jugador_2 = font.render(f"Jugador 2: {Jugador_2.goles}", True, WHITE)
+    puntaje_jugador_1 = font.render(f"{Jugador_1.nombre}: {Jugador_1.goles}", True, WHITE)
+    puntaje_jugador_2 = font.render(f"{Jugador_2.nombre}: {Jugador_2.goles}", True, WHITE)
 
     # Posicionamiento en la pantalla
     PANTALLA.blit(puntaje_jugador_1, (10, 10))
