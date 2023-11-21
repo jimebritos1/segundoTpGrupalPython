@@ -1,0 +1,183 @@
+        
+
+# Arco Izquierdo
+posicionX_InitArcoIzquierdo = 100  # posición en x
+posicionY_InitArcoIzquierdo = 300  # posición en y
+velocidadArcoIzquierdo = 0  # Velocidad para el arco
+ArcoIzquierdoImg = pygame.image.load("segundoTpGrupalPython/arco2.png").convert_alpha()
+
+# Arco Derecho
+posicionX_InitArcoDerecho = 900  # posición en x
+posicionY_InitArcoDerecho = 300  # posición en y
+velocidadArcoDerecho = 0  # Velocidad para el arco
+ArcoDerechoImg = pygame.image.load('segundoTpGrupalPython/arco1.png').convert_alpha()
+
+
+class balonObjeto(pygame.sprite.Sprite):
+    def __init__(self):
+	    # Heredamos el init de la clase Sprite de Pygame
+        super().__init__()
+        self.image = Pelota
+        self.rect = self.image.get_rect()
+        self.rect.center = (ANCHO // 2,ALTO // 2)
+        self.velocidad_x = 0 # Velocidad inicial en x
+        self.velocidad_y = 0 # Velocidad inicial en y
+    
+    def update(self):
+        # Colision de jugador 1 con el balon
+        if self.rect.colliderect(Jugador_1.rect):
+            intersection = self.rect.clip(Jugador_1.rect)
+
+            # Verifica la cara de colisión con el jugador
+            if intersection.width > intersection.height:
+                # Colisión vertical
+                if self.rect.centery < Jugador_1.rect.centery:
+                    self.rect.bottom = Jugador_1.rect.top
+                    self.velocidad_y = -velocidadPelota
+                else:
+                    self.rect.top = Jugador_1.rect.bottom
+                    self.velocidad_y = velocidadPelota
+            else:
+                # Colisión horizontal
+                if self.rect.centerx < Jugador_1.rect.centerx:
+                    self.rect.right = Jugador_1.rect.left
+                    self.velocidad_x = -velocidadPelota
+                else:
+                    self.rect.left = Jugador_1.rect.right
+                    self.velocidad_x = velocidadPelota
+                    
+            if self.velocidad_x > 0:
+                self.velocidad_x = velocidadPelota  # Colisión desde la derecha, cambia a la izquierda
+            elif self.velocidad_x <=0:
+                self.velocidad_x = -velocidadPelota  # Colisión desde la izquierda, cambia a la derecha
+            
+            if self.velocidad_y > 0:
+                self.velocidad_y = velocidadPelota  # Colisión desde abajo, cambia a arriba
+            elif self.velocidad_y <= 0:
+                self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
+                     
+        # Colision de jugador 2 con el balon
+        if self.rect.colliderect(Jugador_2.rect):
+            intersection2 = self.rect.clip(Jugador_2.rect)
+           
+            # Verifica la cara de colisión con el jugador
+            if intersection2.width > intersection2.height:
+                # Colisión vertical
+                if self.rect.centery < Jugador_2.rect.centery:
+                    self.rect.bottom = Jugador_2.rect.top
+                    self.velocidad_y = -velocidadPelota
+                else:
+                    self.rect.top = Jugador_2.rect.bottom
+                    self.velocidad_y = velocidadPelota
+            else:
+                # Colisión horizontal
+                if self.rect.centerx < Jugador_2.rect.centerx:
+                    self.rect.right = Jugador_2.rect.left
+                    self.velocidad_x = -velocidadPelota
+                else:
+                    self.rect.left = Jugador_2.rect.right
+                    self.velocidad_x = velocidadPelota
+                
+            if self.velocidad_x > 0:
+                self.velocidad_x = velocidadPelota  # Colisión desde la derecha, cambia a la izquierda
+            elif self.velocidad_x <=0:
+                self.velocidad_x = -velocidadPelota  # Colisión desde la izquierda, cambia a la derecha
+            
+            if self.velocidad_y > 0:
+                self.velocidad_y = velocidadPelota  # Colisión desde abajo, cambia a arriba
+            elif self.velocidad_y <= 0:
+                self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
+        
+
+        # Verifica si ha alcanzado el límite derecho o izquierdo y revierte la dirección si es necesario
+        if self.rect.right >= ANCHO:
+            self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
+        elif self.rect.left <= 0:
+            self.velocidad_x = abs(self.velocidad_x)  # Invierte la dirección (negativa a positiva) al tocar el límite izquierdo
+
+        if self.rect.top >= ALTO-50:
+            self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
+        elif self.rect.bottom <= 30:
+            self.velocidad_y = abs(self.velocidad_y)  # Invierte la dirección (negativa a positiva) al tocar el límite superior
+        
+        self.rect.x += self.velocidad_x       
+        self.rect.y += self.velocidad_y
+        
+        colision = pygame.sprite.spritecollide(Balon,arco_objeto_derecho,False)
+        if colision:
+           Balon.image = pygame.image.load("segundoTpGrupalPython/gol.png").convert()
+           Balon.velocidad_x = 0  # Velocidad inicial en x
+           Balon.velocidad_y = 0  # Velocidad inicial en y
+           self.rect = self.image.get_rect()
+           self.rect.center = (ANCHO // 2,ALTO // 2)
+           Jugador_1.goles += 1
+           print(f"Gol del Jugador 1. Goles: {Jugador_1.goles}")
+           # Reiniciar posiciones
+           
+           #  Configurar para que aprete enter  y reinicie posición 
+           Jugador_1.rect.center = (posicionX_Init, posicionY_Init)
+           Jugador_2.rect.center = (posicionX_Init2, posicionY_Init2)
+           Balon.rect.center = (ANCHO // 2, ALTO // 2)
+           Balon.image = pygame.image.load("segundoTpGrupalPython/Img/pelota.png").conv
+
+
+class ArcoIzquierdo(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = ArcoIzquierdoImg
+        self.rect = self.image.get_rect()
+        self.rect.center = (posicionX_InitArcoIzquierdo,posicionY_InitArcoIzquierdo )
+        self.velocidad_x = 0  # Velocidad inicial en x
+        self.velocidad_y = 0  # Velocidad inicial en y
+        
+class ArcoDerecho(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = ArcoDerechoImg
+        self.rect = self.image.get_rect()
+        self.rect.center = (posicionX_InitArcoDerecho,posicionY_InitArcoDerecho )
+        self.velocidad_x = 0  # Velocidad inicial en x
+        self.velocidad_y = 0  # Velocidad inicial en y
+        self.image.set_colorkey(BLACK)
+               
+        
+  
+            
+# Grupo de sprites y balon
+sprites = pygame.sprite.Group()
+balon_objeto = pygame.sprite.Group()
+arco_objeto_izquierdo = pygame.sprite.Group()
+arco_objeto_derecho = pygame.sprite.Group()
+
+#instanciacion del Balon
+Balon = balonObjeto()
+balon_objeto.add(Balon)
+
+#instanciacion de Jugador 1
+Jugador_1 = Jugador_Uno()
+sprites.add(Jugador_1)
+
+#instanciacion de Jugador 2
+Jugador_2 = Jugador_Dos()
+sprites.add(Jugador_2)
+
+ArcoI = ArcoIzquierdo()
+arco_objeto_izquierdo.add(ArcoI)
+
+ArcoD = ArcoDerecho()
+arco_objeto_derecho.add(ArcoD)
+
+ #Recargo la Pantalla (Evito la superoposicion)
+    PANTALLA.blit(CanchaFutbol, (0, 0))
+
+    #Actualizacion de Sprites
+    balon_objeto.update()
+    sprites.update()
+    arco_objeto_izquierdo.update()
+    arco_objeto_derecho.update()
+    
+    #Dibujo Sprites y Balon
+    sprites.draw(PANTALLA)
+    balon_objeto.draw(PANTALLA)
+    arco_objeto_izquierdo.draw(PANTALLA)
+    arco_objeto_derecho.draw(PANTALLA)
