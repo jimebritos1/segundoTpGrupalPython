@@ -5,8 +5,6 @@ import pygame
 pygame.init()
 pygame.mixer.init()
 
-
-
 #Colores constantes
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -15,7 +13,7 @@ WHITE = (255,255,255)
 ANCHO=1000
 ALTO=650
 PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
-pygame.display.set_caption("Pygame Test")
+pygame.display.set_caption("FootBall Game")
 
 
 Palo_S_I=pygame.draw.rect(PANTALLA,WHITE,(0,225,50,20))
@@ -304,16 +302,7 @@ class balonObjeto(pygame.sprite.Sprite):
                     self.rect.left = Jugador_1.rect.right
                     self.velocidad_x = velocidadPelota
                     SoundBalon.play()
-                    
-            if self.velocidad_x > 0:
-                self.velocidad_x = velocidadPelota  # Colisión desde la derecha, cambia a la izquierda
-            elif self.velocidad_x <=0:
-                self.velocidad_x = -velocidadPelota  # Colisión desde la izquierda, cambia a la derecha
-            if self.velocidad_y > 0:
-                self.velocidad_y = velocidadPelota  # Colisión desde abajo, cambia a arriba
-            elif self.velocidad_y <= 0:
-                self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
-                     
+                                 
         # Colision de jugador 2 con el balon
         if self.rect.colliderect(Jugador_2.rect):
             intersection2 = self.rect.clip(Jugador_2.rect)
@@ -339,42 +328,74 @@ class balonObjeto(pygame.sprite.Sprite):
                     self.rect.left = Jugador_2.rect.right
                     self.velocidad_x = velocidadPelota
                     SoundBalon.play()
-                
-            if self.velocidad_x > 0:
-                self.velocidad_x = velocidadPelota  # Colisión desde la derecha, cambia a la izquierda
-            elif self.velocidad_x <=0:
-                self.velocidad_x = -velocidadPelota  # Colisión desde la izquierda, cambia a la derecha
-            
-            if self.velocidad_y > 0:
-                self.velocidad_y = velocidadPelota  # Colisión desde abajo, cambia a arriba
-            elif self.velocidad_y <= 0:
-                self.velocidad_y = -velocidadPelota  # Colisión desde arriba, cambia a abajo
-
-
+                          
         #Colsion de los Palos con la pelota
-        ColisionP= pygame.sprite.spritecollide(Balon,ObjetoPalos,False)
-        if ColisionP:
-            if self.rect.right >= Palo_S_I.rect.right:
-                self.velocidad_x = abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
-            if self.rect.top >= Palo_S_I.rect.top:
-                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
-
-            if self.rect.right >= Palo_I_I.rect.right:
-                self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
-            if self.rect.bottom <= Palo_I_I.rect.bottom:
-                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
-
-            if self.rect.left <= Palo_S_D.rect.left:
-                self.velocidad_x = abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
-            if self.rect.top >= Palo_S_D.rect.top:
-                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
-
-            if self.rect.left <= Palo_I_D.rect.left:
-                self.velocidad_x = -abs(self.velocidad_x)  # Invierte la dirección (positiva a negativa) al tocar el límite derecho
-            if self.rect.bottom <= Palo_I_D.rect.bottom:
-                self.velocidad_y = -abs(self.velocidad_y)  # Invierte la dirección (positiva a negativa) al tocar el límite inferior
-
         
+        #Colision de Palo Superior Izquierda
+        if self.rect.colliderect(Palo_S_I.rect):
+            intersectionPaloSI = self.rect.clip(Palo_S_I.rect)
+            # Verifica la cara de colisión con el Palo
+            if intersectionPaloSI.width > intersectionPaloSI.height:
+                # Colisión vertical
+                if self.rect.centery < Palo_S_I.rect.centery:
+                    self.rect.bottom = Palo_S_I.rect.top
+                    self.velocidad_y = -velocidadPelota
+                    SoundBalon.play()
+            else:
+                # Colisión horizontal
+                if self.rect.centerx > Palo_S_I.rect.centerx:
+                    self.rect.left = Palo_S_I.rect.right
+                    self.velocidad_x = velocidadPelota
+                    SoundBalon.play()
+        #Colision de Palo Inferior Izquierda 
+        if self.rect.colliderect(Palo_I_I.rect):
+            intersectionPaloII = self.rect.clip(Palo_I_I.rect)
+            # Verifica la cara de colisión con el Palo
+            if intersectionPaloII.width > intersectionPaloII.height:
+                # Colisión vertical
+                if self.rect.centery > Palo_I_I.rect.centery:
+                    self.rect.top = Palo_I_I.rect.bottom
+                    self.velocidad_y = velocidadPelota
+                    SoundBalon.play()
+            else:
+                # Colisión horizontal
+                if self.rect.centerx > Palo_I_I.rect.centerx:
+                    self.rect.left = Palo_I_I.rect.right
+                    self.velocidad_x = velocidadPelota
+                    SoundBalon.play()
+        #Colision de Palo Superior Derecha            
+        if self.rect.colliderect(Palo_S_D.rect):
+            intersectionPaloSD = self.rect.clip(Palo_S_D.rect)
+            # Verifica la cara de colisión con el Palo
+            if intersectionPaloSD.width > intersectionPaloSD.height:
+                # Colisión vertical
+                if self.rect.centery < Palo_S_D.rect.centery:
+                    self.rect.bottom = Palo_S_D.rect.top
+                    self.velocidad_y = -velocidadPelota
+                    SoundBalon.play()
+            else:
+                # Colisión horizontal
+                if self.rect.centerx < Palo_S_D.rect.centerx:
+                    self.rect.right = Palo_S_D.rect.left
+                    self.velocidad_x = -velocidadPelota
+                    SoundBalon.play()
+        #Colision de Palo Inferior Derecha  
+        if self.rect.colliderect(Palo_I_D.rect):
+            intersectionPaloID = self.rect.clip(Palo_I_D.rect)
+            # Verifica la cara de colisión con el Palo
+            if intersectionPaloID.width > intersectionPaloID.height:
+                # Colisión vertical
+                if self.rect.centery > Palo_I_D.rect.centery:
+                    self.rect.top = Palo_I_D.rect.bottom
+                    self.velocidad_y = velocidadPelota
+                    SoundBalon.play()
+            else:
+                # Colisión horizontal
+                if self.rect.centerx < Palo_I_D.rect.centerx:
+                    self.rect.right = Palo_I_D.rect.left
+                    self.velocidad_x = -velocidadPelota
+                    SoundBalon.play()
+
 
         # Verifica si ha alcanzado el límite derecho o izquierdo y revierte la dirección si es necesario
         if self.rect.right >= ANCHO:
